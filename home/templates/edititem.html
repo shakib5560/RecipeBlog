@@ -1,0 +1,108 @@
+{% extends "index.html" %}
+
+{% block title %}
+  Edit-Blog
+{% endblock title %}
+
+{% block content %}
+
+
+<h1 class="text-4xl text-center text-black font-bold mt-[100px]">Edit Post</h1>
+
+<div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+  <form class="space-y-6" method="post" enctype="multipart/form-data"> 
+    {% csrf_token %}
+    <!-- Title -->
+    <div>
+      <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+      <input type="text" value="{{recData.title}}" required id="title" name="title" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter title">
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+      <textarea id="description" required name="description" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter description">{{recData.description}}</textarea>
+    </div>
+
+<!-- Images -->
+<!-- HTML -->
+<div>
+  <label for="images" class="block text-sm font-medium text-gray-700">Images</label>
+  
+  <!-- Image Preview Section -->
+  <div id="image-preview" class="mb-2 mt-2">
+    <!-- Initially show the existing image, if available -->
+    <img id="currentImage" src="{{recData.images.url}}" alt="Current Image" class="w-36 mb-3 rounded-2xl h-32 object-cover"/>
+  </div>
+  
+  <!-- File Input -->
+  <input
+    type="file"
+    id="images"
+    name="images"
+    multiple
+    class="mt-1 block w-full text-sm text-gray-500
+           file:mr-4 file:py-2 file:px-4 file:rounded-md 
+           file:border-0 file:text-sm file:font-semibold
+           file:bg-indigo-50 file:text-indigo-700 
+           hover:file:bg-indigo-100"
+    onchange="previewImage(event)" />
+</div>
+
+<!-- JavaScript -->
+<script>
+  function previewImage(event) {
+    const files = event.target.files;
+    if (files && files[0]) {
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        // Update the image preview with the selected image
+        const imagePreview = document.getElementById('currentImage');
+        imagePreview.src = e.target.result;
+      };
+
+      // Read the selected image file as a data URL
+      reader.readAsDataURL(files[0]);
+    }
+  }
+</script>
+
+
+<!-- Author -->
+<div>
+  <label for="author" class="block text-sm font-medium text-gray-700">Author</label>
+  <select required id="author" name="user" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+    <option value="">Select an author</option>
+    {% for user in users %}
+      <!-- Pre-select the current author -->
+      <option value="{{ user.id }}" {% if user.id == recData.user.id %}selected{% endif %}>
+        {{ user.username }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+    
+
+    <!-- Tags -->
+    <div>
+      <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
+      <input value="{{recData.tags}}" type="text" required id="tags" name="tags" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter tags, separated by commas">
+    </div>
+
+    <!-- Submit Button -->
+    <div>
+      <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Submit</button>
+    </div>
+
+    
+  </form>
+
+
+</div>
+
+
+
+
+{% endblock %}
